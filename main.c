@@ -119,16 +119,17 @@ int collect(const char* topic)
     usleep(200000U);
     printf("%s\n\n",json1_1);
     cJSON_Delete(root);
-    root =NULL;
-    json1_1 = NULL;
-    /*mqtt_publish(&client, topic, json1_1, strlen((const char *)json1_1), MQTT_PUBLISH_QOS_0);   
+    
+
+    mqtt_publish(&client, topic, json1_1, strlen((const char *)json1_1), MQTT_PUBLISH_QOS_0);   
     if (client.error != MQTT_OK) 
     {
         fprintf(stderr, "error: %s\n", mqtt_error_str(client.error));
         exit_example(EXIT_FAILURE, sockfd, &client_daemon);
     }   
-    */
-
+    
+    root =NULL;
+    json1_1 = NULL;
     return 0;
 }
 
