@@ -80,11 +80,11 @@ int count2 = 100;
 
 int collect(const char* topic)
 {
+
     count++;
     printf("----------------------------------------\n");
     printf("\033[1m\033[45;33m              第%d次全量采集            \033[0m\n",count);
     printf("----------------------------------------\n");
-     
 
     /*创建json并摘要*/
     cJSON *root;   
@@ -94,9 +94,11 @@ int collect(const char* topic)
     cJSON_AddStringToObject(root,"position","(0,0)");
     
     printf("数据采集中............\n\n");
-    usleep(1000000U);
+    usleep(2000000U);
     if(count<10 && count%10 == 5)  count2-=1;
-    if(count>=10 && count <50 && (count%10 == 3 || count%10 == 8))  count2-=1;
+    if(count>=10 && count <100 && (count%10 == 3 || count%10 == 8))  count2-=1;
+    if(count>=100 && (count%10 == 3 || count%10 == 5 || count%10 == 8))  count2-=1;
+    if(count2 <= 0) return -1;
     cJSON_AddNumberToObject(root,"power", count2);
 
     char DateTime[18];
@@ -143,9 +145,9 @@ int main(int argc, const char *argv[])
     } else {
         //addr = "218.89.239.8";
         //addr = "127.0.0.1";
-        //addr = "192.168.31.246";
+        addr = "192.168.31.246";
         //addr = "192.168.31.183";
-        addr = "47.112.10.111";
+       // addr = "47.112.10.111";
     }
     /* get port number (argv[2] if present) */
     if (argc > 2) {
@@ -199,13 +201,14 @@ int main(int argc, const char *argv[])
     snprintf(tmpTopic,sizeof(tmpTopic),"%s%s%s","/devices/",deviceID,"/onlinemsg"); 
     mqtt_publish(&client, tmpTopic, "online", 
                  strlen("online"), MQTT_PUBLISH_QOS_1| MQTT_PUBLISH_RETAIN);
-    
+    int p =0;
     /*设备采集流程*/
     while(1)
     {
     memset(tmpTopic,0,sizeof(tmpTopic));
     snprintf(tmpTopic,sizeof(tmpTopic),"%s%s%s","/devices/",deviceID,"/realtime/status"); 
-    collect(tmpTopic); 
+    p = collect(tmpTopic); 
+    if(p<0) break;
     }
     
      
